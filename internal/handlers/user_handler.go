@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"ejemplo1/pkg/models"
+	"github.com/SaulFernanRodri/go-starter/pkg/models"
 	"encoding/json"
 	"net/http"
 )

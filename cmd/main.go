@@ -2,7 +2,7 @@
 package main
 
 import (
-	"ejemplo1/internal/handlers"
+	"github.com/SaulFernanRodri/go-starter/internal/handlers"
 	"net/http"
 )
 
