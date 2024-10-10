@@ -1,9 +1,11 @@
 package handlers
 
 import (
-	"ejemplo1/pkg/models"
 	"encoding/json"
 	"net/http"
+	"strconv"
+
+	"github.com/SaulFernanRodri/go-starter/pkg/models"
 )
 
 var productos []models.Product
@@ -15,6 +17,10 @@ func ProductHandler(w http.ResponseWriter, r *http.Request) {
 		listarProductos(w)
 	case "POST":
 		crearProducto(w, r)
+	case "PUT":
+		actualizarProducto(w, r)
+	case "DELETE":
+		eliminarProducto(w, r)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Método no permitido"})
@@ -63,4 +69,74 @@ func crearProducto(w http.ResponseWriter, r *http.Request) {
 	// Devolver el producto creado en la respuesta
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(product)
+}
+
+// actualizarProducto actualiza un producto existente
+func actualizarProducto(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Parsear los datos enviados en el cuerpo de la solicitud (en JSON)
+	var updatedProduct models.Product
+	err := json.NewDecoder(r.Body).Decode(&updatedProduct)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"})
+		return
+	}
+
+	// Buscar el producto a actualizar
+	for i, product := range productos {
+		if product.ID == updatedProduct.ID {
+			// Actualizar los datos del producto
+			productos[i] = updatedProduct
+
+			// Devolver el producto actualizado en la respuesta
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(updatedProduct)
+			return
+		}
+	}
+
+	// Si no se encuentra el producto, devolver un error
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{"error": "Producto no encontrado"})
+}
+
+// eliminarProducto elimina un producto existente
+func eliminarProducto(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Obtener el ID del producto desde los parámetros de la URL
+	keys, ok := r.URL.Query()["id"]
+
+	if !ok || len(keys[0]) < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "ID del producto no proporcionado"})
+		return
+	}
+
+	// Convertir el ID de string a int
+	id, err := strconv.Atoi(keys[0])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"})
+		return
+	}
+
+	// Buscar el producto a eliminar
+	for i, product := range productos {
+		if product.ID == id {
+			// Eliminar el producto de la lista
+			productos = append(productos[:i], productos[i+1:]...)
+
+			// Devolver un mensaje de éxito en la respuesta
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{"message": "Producto eliminado"})
+			return
+		}
+	}
+
+	// Si no se encuentra el producto, devolver un error
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{"error": "Producto no encontrado"})
 }

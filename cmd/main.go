@@ -1,15 +1,14 @@
-// cmd/mi-aplicacion/main.go
 package main
 
 import (
-	"github.com/SaulFernanRodri/go-starter/internal/handlers"
 	"net/http"
+
+	"github.com/SaulFernanRodri/go-starter/internal/handlers"
 )
 
 func main() {
 
 	http.HandleFunc("/usuarios", handlers.UserHandler)
 	http.HandleFunc("/productos", handlers.ProductHandler)
-
 	http.ListenAndServe(":8080", nil)
 }
