@@ -1,3 +1,3 @@
-# Mi Proyecto Go
+# My Go Project
 
-Este es un ejemplo de un proyecto básico de Go con bucles, estructuras y funciones distribuidas en múltiples archivos.
+Here’s an example of a simple Go project designed for practice.
