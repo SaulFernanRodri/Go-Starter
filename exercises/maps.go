@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main() {
+func maps() {
 	// Crear un mapa para almacenar edades de personas
 	edades := make(map[string]int)
 

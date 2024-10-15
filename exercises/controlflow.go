@@ -2,27 +2,36 @@ package main
 
 import "fmt"
 
-func main() {
+func controlflow() {
+
+	// Definimos un mapa
+	myMap := map[string]int{
+		"Álvaro": 22,
+		"María":  30,
+	}
+
+	// Intentamos acceder a una clave que existe
+	age, ok := myMap["Álvaro"]
+	if ok {
+		fmt.Println("Álvaro's age is", age)
+	} else {
+		fmt.Println("Álvaro not found")
+	}
+
+	// Intentamos acceder a una clave que no existe
+	age, ok = myMap["Carlos"]
+	if ok {
+		fmt.Println("Carlos's age is", age)
+	} else {
+		fmt.Println("Carlos not found")
+	}
+
 	// If-else statement
 	num := 10
 	if num%2 == 0 {
 		fmt.Println("num is even")
 	} else {
 		fmt.Println("num is odd")
-	}
-
-	// Declare the map
-	someMap := map[string]int{
-		"key": 42,
-		"foo": 100,
-		"bar": 200,
-	}
-
-	// Comma ok idiom
-	if value, ok := someMap["key"]; ok {
-		fmt.Println("Key found:", value)
-	} else {
-		fmt.Println("Key not found")
 	}
 
 	// Switch statement
@@ -54,6 +63,7 @@ func main() {
 	case msg2 := <-ch2:
 		fmt.Println("Received", msg2)
 	}
+
 	// For loop
 	for i := 0; i < 5; i++ {
 		fmt.Println(i)

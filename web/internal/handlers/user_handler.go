@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/SaulFernanRodri/go-starter/pkg/models"
+	"go-starter/web/pkg/models"
 )
 
 var usuarios []models.User

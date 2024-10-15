@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main() {
+func variables() {
 	// Declaración de variables
 	var entero int = 10
 	var flotante float64 = 20.5

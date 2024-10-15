@@ -2,7 +2,8 @@ package main
 
 import "fmt"
 
-func main() {
+func slices() {
+
 	// Crear un slice vacío
 	var s []int
 	fmt.Println("Slice vacío:", s)
@@ -38,15 +39,6 @@ func main() {
 	fmt.Println("Slice modificado:", s)
 
 	// Buscar un elemento en un slice
-	func buscarElemento(slice []int, elemento int) int {
-		for i, v := range slice {
-			if v == elemento {
-				return i
-			}
-		}
-		return -1
-	}
-
 	indice := buscarElemento(s, 30)
 	if indice != -1 {
 		fmt.Println("Elemento encontrado en el índice:", indice)
@@ -55,13 +47,22 @@ func main() {
 	}
 
 	// Eliminar un elemento de un slice
-	func eliminarElemento(slice []int, indice int) []int {
-		if indice < 0 || indice >= len(slice) {
-			return slice
-		}
-		return append(slice[:indice], slice[indice+1:]...)
-	}
-
 	s = eliminarElemento(s, 2)
 	fmt.Println("Slice después de eliminar el elemento en el índice 2:", s)
+}
+
+func buscarElemento(slice []int, elemento int) int {
+	for i, v := range slice {
+		if v == elemento {
+			return i
+		}
+	}
+	return -1
+}
+
+func eliminarElemento(slice []int, indice int) []int {
+	if indice < 0 || indice >= len(slice) {
+		return slice
+	}
+	return append(slice[:indice], slice[indice+1:]...)
 }

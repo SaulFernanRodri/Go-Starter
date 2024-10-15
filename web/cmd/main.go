@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/SaulFernanRodri/go-starter/internal/handlers"
+	"go-starter/web/internal/handlers"
 )
 
 func main() {
