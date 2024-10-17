@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"go-starter/web/pkg/models"
+	"go-starter/web/pkg/utils"
 )
 
 var productos []models.Product
@@ -64,6 +66,16 @@ func crearProducto(w http.ResponseWriter, r *http.Request) {
 
 	// Asignar un ID al nuevo producto
 	product.ID = len(productos) + 1
+
+	product.Imagen, err = utils.GenerateMilsymbol(product.Milsymbol)
+
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Error al generar el símbolo"})
+		return
+	}
+
 	productos = append(productos, product)
 
 	// Devolver el producto creado en la respuesta

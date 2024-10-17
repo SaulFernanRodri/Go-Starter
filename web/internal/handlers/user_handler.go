@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"go-starter/web/pkg/models"
+	"go-starter/web/pkg/utils"
 )
 
 var usuarios []models.User
@@ -64,6 +66,16 @@ func crearUsuario(w http.ResponseWriter, r *http.Request) {
 
 	// Asignar un ID al nuevo usuario
 	user.ID = len(usuarios) + 1
+
+	user.Imagen, err = utils.GenerateMilsymbol(user.Milsymbol)
+
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Error al generar el símbolo"})
+		return
+	}
+
 	usuarios = append(usuarios, user)
 
 	// Devolver el usuario creado en la respuesta
@@ -130,6 +142,40 @@ func eliminarUsuario(w http.ResponseWriter, r *http.Request) {
 			// Devolver un mensaje de éxito en la respuesta
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(map[string]string{"message": "Usuario eliminado"})
+			return
+		}
+	}
+
+	// Si no se encuentra el usuario, devolver un error
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{"error": "Usuario no encontrado"})
+}
+
+func showImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/svg+xml")
+
+	// Obtener el ID del usuario desde los parámetros de la URL
+	keys, ok := r.URL.Query()["id"]
+
+	if !ok || len(keys[0]) < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "ID del usuario no proporcionado"})
+		return
+	}
+
+	// Convertir el ID de string a int
+	id, err := strconv.Atoi(keys[0])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"})
+		return
+	}
+
+	// Buscar el usuario con el ID especificado
+	for _, u := range usuarios {
+		if u.ID == id {
+			// Devolver la imagen del usuario
+			w.Write([]byte(u.Imagen))
 			return
 		}
 	}

@@ -23,6 +23,15 @@ func variables() {
 	var arrayCadenas [3]string = [3]string{"uno", "dos", "tres"}
 
 	// Imprimir variables
+	/*
+		%s para cadenas.
+		%d para enteros.
+		%f para números de punto flotante.
+		%T para imprimir el tipo del valor.
+		%t para valores booleanos.
+		%v para imprimir el valor en formato predeterminado.
+	*/
+
 	fmt.Printf("Entero: %d\n", entero)
 	fmt.Printf("Flotante: %.2f\n", flotante)
 	fmt.Printf("Cadena: %s\n", cadena)
