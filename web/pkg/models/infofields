@@ -1,8 +1,0 @@
-package models
-
-type InfoFields struct {
-	UniqueDesignation string `json:"uniqueDesignation"`
-	HigherFormation   string `json:"higherFormation"`
-	StaffComments     string `json:"staffComments"`
-	Speed             string `json:"speed"`
-}

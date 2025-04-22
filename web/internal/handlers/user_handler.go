@@ -25,7 +25,9 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		eliminarUsuario(w, r)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Método no permitido"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Método no permitido"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -35,13 +37,17 @@ func listarUsuarios(w http.ResponseWriter) {
 
 	if len(usuarios) == 0 {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{"message": "No hay usuarios registrados"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"message": "No hay usuarios registrados"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	// Devolver la lista de usuarios como JSON
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(usuarios)
+	if err := json.NewEncoder(w).Encode(usuarios); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }
 
 // crearUsuario crea un nuevo usuario a partir de los datos enviados en la solicitud
@@ -53,14 +59,18 @@ func crearUsuario(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"message": "Datos invalidos"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	// Validar que los datos sean correctos
 	if user.Nombre == "" || user.Correo == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Nombre o correo inválido"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Nombre o correo inválido"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -72,7 +82,9 @@ func crearUsuario(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Error al generar el símbolo"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Error al generar el símbolo"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -80,7 +92,9 @@ func crearUsuario(w http.ResponseWriter, r *http.Request) {
 
 	// Devolver el usuario creado en la respuesta
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }
 
 // actualizarUsuario actualiza un usuario existente a partir de los datos enviados en la solicitud
@@ -92,7 +106,9 @@ func actualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -102,14 +118,18 @@ func actualizarUsuario(w http.ResponseWriter, r *http.Request) {
 			// Actualizar los datos del usuario
 			usuarios[i] = user
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(user)
+			if err := json.NewEncoder(w).Encode(user); err != nil {
+				http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+			}
 			return
 		}
 	}
 
 	// Si no se encuentra el usuario, devolver un error
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(map[string]string{"error": "Usuario no encontrado"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"error": "Usuario no encontrado"}); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }
 
 // eliminarUsuario elimina un usuario existente a partir del ID enviado como parámetro en la URL
@@ -121,7 +141,9 @@ func eliminarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	if !ok || len(keys[0]) < 1 {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "ID del usuario no proporcionado"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "ID del usuario no proporcionado"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -129,7 +151,9 @@ func eliminarUsuario(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(keys[0])
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -141,17 +165,21 @@ func eliminarUsuario(w http.ResponseWriter, r *http.Request) {
 
 			// Devolver un mensaje de éxito en la respuesta
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(map[string]string{"message": "Usuario eliminado"})
+			if err := json.NewEncoder(w).Encode(map[string]string{"message": "Usuario eliminado"}); err != nil {
+				http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+			}
 			return
 		}
 	}
 
 	// Si no se encuentra el usuario, devolver un error
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(map[string]string{"error": "Usuario no encontrado"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"error": "Usuario no encontrado"}); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }
 
-func showImage(w http.ResponseWriter, r *http.Request) {
+func ShowImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/svg+xml")
 
 	// Obtener el ID del usuario desde los parámetros de la URL
@@ -159,7 +187,9 @@ func showImage(w http.ResponseWriter, r *http.Request) {
 
 	if !ok || len(keys[0]) < 1 {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "ID del usuario no proporcionado"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "ID del usuario no proporcionado"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -167,7 +197,9 @@ func showImage(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(keys[0])
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -175,12 +207,16 @@ func showImage(w http.ResponseWriter, r *http.Request) {
 	for _, u := range usuarios {
 		if u.ID == id {
 			// Devolver la imagen del usuario
-			w.Write([]byte(u.Imagen))
+			if _, err := w.Write([]byte(u.Imagen)); err != nil {
+				http.Error(w, "Error al escribir la imagen", http.StatusInternalServerError)
+			}
 			return
 		}
 	}
 
 	// Si no se encuentra el usuario, devolver un error
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(map[string]string{"error": "Usuario no encontrado"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"error": "Usuario no encontrado"}); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }

@@ -25,7 +25,9 @@ func ProductHandler(w http.ResponseWriter, r *http.Request) {
 		eliminarProducto(w, r)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Método no permitido"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Método no permitido"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -35,13 +37,17 @@ func listarProductos(w http.ResponseWriter) {
 
 	if len(productos) == 0 {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{"message": "No hay productos registrados"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"message": "No hay productos registrados"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	// Devolver la lista de productos como JSON
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(productos)
+	if err := json.NewEncoder(w).Encode(productos); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }
 
 // crearProducto crea un nuevo producto a partir de los datos enviados en la solicitud
@@ -53,14 +59,18 @@ func crearProducto(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	// Validar que los datos sean correctos
 	if product.Nombre == "" || product.Precio <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Nombre o precio inválido"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Nombre o precio inválido"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -72,7 +82,9 @@ func crearProducto(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Error al generar el símbolo"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Error al generar el símbolo"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -80,7 +92,9 @@ func crearProducto(w http.ResponseWriter, r *http.Request) {
 
 	// Devolver el producto creado en la respuesta
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(product)
+	if err := json.NewEncoder(w).Encode(product); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }
 
 // actualizarProducto actualiza un producto existente
@@ -92,7 +106,9 @@ func actualizarProducto(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&updatedProduct)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "Datos inválidos"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -104,14 +120,18 @@ func actualizarProducto(w http.ResponseWriter, r *http.Request) {
 
 			// Devolver el producto actualizado en la respuesta
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(updatedProduct)
+			if err := json.NewEncoder(w).Encode(updatedProduct); err != nil {
+				http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+			}
 			return
 		}
 	}
 
 	// Si no se encuentra el producto, devolver un error
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(map[string]string{"error": "Producto no encontrado"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"error": "Producto no encontrado"}); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }
 
 // eliminarProducto elimina un producto existente
@@ -123,7 +143,9 @@ func eliminarProducto(w http.ResponseWriter, r *http.Request) {
 
 	if !ok || len(keys[0]) < 1 {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "ID del producto no proporcionado"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "ID del producto no proporcionado"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -131,7 +153,9 @@ func eliminarProducto(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(keys[0])
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"})
+		if err := json.NewEncoder(w).Encode(map[string]string{"error": "ID inválido"}); err != nil {
+			http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -143,12 +167,16 @@ func eliminarProducto(w http.ResponseWriter, r *http.Request) {
 
 			// Devolver un mensaje de éxito en la respuesta
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(map[string]string{"message": "Producto eliminado"})
+			if err := json.NewEncoder(w).Encode(map[string]string{"message": "Producto eliminado"}); err != nil {
+				http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+			}
 			return
 		}
 	}
 
 	// Si no se encuentra el producto, devolver un error
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(map[string]string{"error": "Producto no encontrado"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"error": "Producto no encontrado"}); err != nil {
+		http.Error(w, "Error al codificar la respuesta", http.StatusInternalServerError)
+	}
 }

@@ -4,10 +4,10 @@ import "fmt"
 
 func variables() {
 	// Declaración de variables
-	var entero int = 10
-	var flotante float64 = 20.5
-	var cadena string = "Hola, Go!"
-	var booleano bool = true
+	var entero = 10
+	var flotante = 20.5
+	var cadena = "Hola, Go!"
+	var booleano = true
 
 	// Declaración de variables sin inicialización
 	var sinInicializar int
@@ -19,8 +19,8 @@ func variables() {
 	booleanoCorto := false
 
 	// Declaración de arrays
-	var arrayEnteros [5]int = [5]int{1, 2, 3, 4, 5}
-	var arrayCadenas [3]string = [3]string{"uno", "dos", "tres"}
+	var arrayEnteros = [5]int{1, 2, 3, 4, 5}
+	var arrayCadenas = [3]string{"uno", "dos", "tres"}
 
 	// Imprimir variables
 	/*
@@ -49,7 +49,9 @@ func variables() {
 	// Lectura de datos desde la entrada estándar
 	var entrada string
 	fmt.Println("Introduce un valor: ")
-	fmt.Scanln(&entrada)
+	if _, err := fmt.Scanln(&entrada); err != nil {
+		fmt.Println("Error al leer la entrada:", err)
+	}
 	fmt.Printf("Valor introducido: %s\n", entrada)
 
 	// Operaciones aritméticas

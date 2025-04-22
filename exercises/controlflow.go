@@ -76,16 +76,6 @@ func controlflow() {
 		j++
 	}
 
-	// Infinite loop with break
-	k := 0
-	for {
-		if k >= 5 {
-			break
-		}
-		fmt.Println(k)
-		k++
-	}
-
 	// Continue statement
 	for l := 0; l < 5; l++ {
 		if l%2 == 0 {
